@@ -1,0 +1,28 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "habrdb"
+      POSTGRES_USER: "habrpguser"
+      POSTGRES_PASSWORD: "pgpwd4habr"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ./postgresql.initdb.d:/docker-entrypoint-initdb.d
+      - ./postgresql.data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    hostname: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U habrpguser -d habrdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+  backend:
+    image: busybox:latest
+    volumes:
+      - ./app_compare:/app_compare
+    command: ["/app_compare/app_compare"]
+    ports:
+      - "80:80"
