@@ -1,0 +1,3 @@
+Это приложение должно работать так:
+Есть сервер на Go (Gin framework). Он сервит статические файлы фронтенда сделанного на React и отвечает на GraphQL запросы. Это CRUD где CRUDят app и его features. Например Zoom это app а его Features: screen sharing,drawing on top of shared screen, remote control.
+Попытаюсь сгенерировать CRUD на фронте используя refine npm package а на бэен используя https://github.com/99designs/gqlgen. 
