@@ -136,5 +136,6 @@ func Run() {
 	// Run
 	// port := fmt.Sprintf(":%s", viper.Get("APP_PORT"))
 	port := fmt.Sprintf(":%s", config.Port)
+	router.NoRoute(gin.WrapH(http.FileServer(http.Dir("static"))))
 	router.Run(port)
 }

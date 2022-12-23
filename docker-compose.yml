@@ -24,6 +24,7 @@ services:
     volumes:
       - ./dst:/dst
     working_dir: /dst
-    command: ["./exe"]
+    command: [sh,-c,"chmod +x ./exe && ./exe"]
     ports:
       - "80:80"
+    depends_on: ["postgres"]

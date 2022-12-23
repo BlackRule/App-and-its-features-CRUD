@@ -1,3 +1,13 @@
+Удалить лишние файлы и поменять нужные в src
+
+---
+Добавить App и Feature
+
+---
+Используя refine сгенерить CRUD на React
+Заставить gin сервить dst/static
+
+---  
 Проверить
 generate_secrets/Pipfile
 учтывая
@@ -12,7 +22,4 @@ cd ./generate_secrets
 pipenv shell
 python ./generate_secrets.py
 ```
-------
-Удалить лишнее и поменять нужное в src
-
-------
+---

@@ -1,6 +1,7 @@
 package gql
 
 import (
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/yhagio/go_api_boilerplate/gql/gen"
 
 	"github.com/yhagio/go_api_boilerplate/services/authservice"
@@ -28,6 +29,6 @@ func GraphqlHandler(
 
 // PlaygroundHandler Defines the Playground handler to expose our playground
 func PlaygroundHandler(path string) gin.HandlerFunc {
-	h := handler.Playground("GraphQL Playground", path)
+	h := playground.Handler("GraphQL Playground", path)
 	return func(c *gin.Context) { h.ServeHTTP(c.Writer, c.Request) }
 }

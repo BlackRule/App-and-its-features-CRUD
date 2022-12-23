@@ -1,6 +1,6 @@
 Это приложение должно работать так:
 Есть сервер на Go (Gin framework). Он сервит статические файлы фронтенда сделанного на React и отвечает на GraphQL запросы. Это CRUD где CRUDят app и его features. Например Zoom это app а его Features: screen sharing,drawing on top of shared screen, remote control.
-Попытаюсь сгенерировать CRUD на фронте используя refine npm package а на бэен используя https://github.com/99designs/gqlgen. 
+Попытаюсь сгенерировать CRUD на фронте используя refine npm package а на бэке используя https://github.com/99designs/gqlgen. 
 
 
 You can replace secrets in dst/.env with ones generated. You can generate secrets running
@@ -20,22 +20,63 @@ A HAMC (Hash-based Message Authentication Code) KEY is a secret key that is used
 
 PEPPER is a term that is often used in conjunction with password storage, where it refers to a secret value that is added to the password before it is hashed (encrypted) and stored. This makes it more difficult for an attacker to guess or crack the password, even if they have access to the hashed version of the password.
 
+**Used libraries:**
+- [gin](https://github.com/gin-gonic)
+- [gorm](https://gorm.io/docs/)
+- [jwt-go](https://pkg.go.dev/gopkg.in/dgrijalva/jwt-go.v3?tab=doc)
+- [godotenv](https://pkg.go.dev/github.com/joho/godotenv?tab=doc)
+- [gqlgen](https://github.com/99designs/gqlgen)
+
+- Components Diagram
+
 #  How to
 
-## Run
+##  Modify
+Make changes to schema by editing the file `schema.graphqls`
 
-0 run
-```
+After making changes run the below command to auto generate the `models` and `resolvers`.
+```shell
 go run github.com/99designs/gqlgen generate
 ```
+Programmer needs to implement the resolvers.
 
-1 run `build linux.bat` and you'll get exe in dst
+## Rebuild
+on Windows for Linux   
+```shell
+build linux.bat
+``` 
+and you'll get exe in dst
 
-2 copy `dst` and `docker-compose.yml` to your server
+## Deploy Windows->Linux
+### Step 0: define variables if u haven't done
+```shell
+SET deployment_path="~/deployment_path"
+set deployment_path=%deployment_path:"=%
+SET server_addr="192.168.1.69"
+set server_addr=%server_addr:"=%
+SET server_user="rules"
+set server_user=%server_user:"=%
+```
+make sure deployment_path exists
+### Step 1:
+```shell
+deploy.bat
+```
+If u don't want to enter password:
+### Step 0: Generate a public and private key pair
+```shell
+ssh-keygen -t rsa
+```
+Beware if u already have the keys the system should warn you. Do not override those.
+### Step 1: Create dir & copy your public key to your remote server
+ssh %server_user%@%server_addr% "mkdir ~/.ssh"
+scp id_rsa.pub %server_user%@%server_addr%:~/
+scp id_rsa.pub %server_user%@%server_addr%:~/.ssh/authorized_keys
 
-3 Run 
+## Run
+from Windows on Linux
 ```sh
-docker-compose up
+ssh -t %server_user%@%server_addr% "cd %deployment_path% && su root -c 'docker kill $(docker ps -q); docker-compose up'"
 ```
 
 ## Use
@@ -61,12 +102,3 @@ mutation {
 updateUser(input:{firstName:"Ivan",email:"dwde"}){id}
 }
 ```
-
-
-##  Make changes to schema by editing the file `schema.graphqls`
-
-After making changes run the below command to auto generate the `models` and `resolvers`.
-```shell
-go run github.com/99designs/gqlgen generate
-```
-Programmer needs to implement the resolvers.
