@@ -1,37 +1,43 @@
-import React from "react";
-import { Link, useHistory, Redirect } from "react-router-dom";
+import React from 'react'
+import { Link, useHistory, Redirect } from 'react-router-dom'
 
-import { register } from "../queries";
-import { useClient, useCustomer } from "../store";
+import { register } from '../queries'
+import { useClient, useCustomer } from '../store'
 
 const Register = () => {
-  const client = useClient();
-  const history = useHistory();
-  const { customer, setCustomer } = useCustomer();
+  const client = useClient()
+  const history = useHistory()
+  const { customer, setCustomer } = useCustomer()
 
-  const onSubmit = (event) => {
-    event.preventDefault();
-
-    const [name, email, password] = event.target.elements;
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
+    event.preventDefault()
+    if (!(event.target instanceof HTMLFormElement)) return
+    const [name, email, password] = event.target.elements
+    if(!email.hasAttribute('value')||!password.hasAttribute('value')) return
 
     client
       .request(register, {
-        name: name.value,
+        
+        /*@ts-ignore*/
         email: email.value,
+        
+        /*@ts-ignore*/
+        name: name.value,
+        /*@ts-ignore*/
         password: password.value,
       })
       .then(({ register_customer: { customer, token } }) => {
-        client.setHeader("authorization", `Bearer ${token}`);
+        client.setHeader('authorization', `Bearer ${token}`)
 
-        setCustomer(customer);
+        setCustomer(customer)
 
-        history.push("/");
+        history.push('/')
       })
-      .catch(console.log);
-  };
+      .catch(console.log)
+  }
 
   if (customer) {
-    return <Redirect to="/" />;
+    return <Redirect to="/" />
   }
 
   return (
@@ -77,7 +83,7 @@ const Register = () => {
         Already registered ? <Link to="/auth/signin">Sign in here</Link>
       </p>
     </form>
-  );
-};
+  )
+}
 
-export default Register;
+export default Register

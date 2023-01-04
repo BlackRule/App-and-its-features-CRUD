@@ -1,4 +1,4 @@
-import { gql } from "graphql-request";
+import { gql } from 'graphql-request'
 
 export const login = gql`
   mutation login_customer($email: String!, $password: String!) {
@@ -11,7 +11,7 @@ export const login = gql`
       }
     }
   }
-`;
+`
 
 export const register = gql`
   mutation register_customer(
@@ -30,7 +30,7 @@ export const register = gql`
       }
     }
   }
-`;
+`
 
 export const refresh_token = gql`
   mutation refresh_token {
@@ -44,10 +44,10 @@ export const refresh_token = gql`
       }
     }
   }
-`;
+`
 
 export const remove_refresh_token = gql`
   mutation remove_refresh_token {
     remove_refresh_token
   }
-`;
+`
