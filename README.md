@@ -2,6 +2,8 @@
 Есть сервер на Go (Gin framework). Он сервит статические файлы фронтенда сделанного на React и отвечает на GraphQL запросы. Это CRUD где CRUDят app и его features. Например Zoom это app а его Features: screen sharing,drawing on top of shared screen, remote control.
 Попытаюсь сгенерировать CRUD на фронте используя refine npm package а на бэке используя https://github.com/99designs/gqlgen. 
 
+Based on https://github.com/yhagio/go_api_boilerplate
+and https://github.com/bahdcoder/jwt-best-practices
 
 You can replace secrets in dst/.env with ones generated. You can generate secrets running
 
@@ -49,14 +51,7 @@ and you'll get exe in dst
 
 ## Deploy Windows->Linux
 ### Step 0: define variables if u haven't done
-```shell
-SET deployment_path="~/deployment_path"
-set deployment_path=%deployment_path:"=%
-SET server_addr="192.168.1.69"
-set server_addr=%server_addr:"=%
-SET server_user="rules"
-set server_user=%server_user:"=%
-```
+run `./env.bat`
 make sure deployment_path exists
 ### Step 1:
 ```shell
@@ -102,3 +97,6 @@ mutation {
 updateUser(input:{firstName:"Ivan",email:"dwde"}){id}
 }
 ```
+
+
+https://www.youtube.com/watch?v=d2gfJ8UVPDo&t=402s
