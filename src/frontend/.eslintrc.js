@@ -121,6 +121,9 @@ module.exports = {
     semi: ['warn', 'never'],
     'sort-keys-fix/sort-keys-fix':['warn', 'asc', {'natural': false}],
     'typescript-sort-keys/interface': 'warn',
-    'typescript-sort-keys/string-enum': 'warn'
+    'typescript-sort-keys/string-enum': 'warn',
+    '@typescript-eslint/no-empty-function': 'warn',
+    '@typescript-eslint/ban-ts-comment': 'warn',
+    'no-debugger': 'warn'
   }
 }

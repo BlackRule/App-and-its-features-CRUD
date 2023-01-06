@@ -34,8 +34,10 @@ PEPPER is a term that is often used in conjunction with password storage, where 
 #  How to
 
 ##  Modify
+
 Make changes to schema by editing the file `schema.graphqls`
 
+Backend
 After making changes run the below command to auto generate the `models` and `resolvers`.
 ```shell
 go run github.com/99designs/gqlgen generate
@@ -68,6 +70,14 @@ ssh %server_user%@%server_addr% "mkdir ~/.ssh"
 scp id_rsa.pub %server_user%@%server_addr%:~/
 scp id_rsa.pub %server_user%@%server_addr%:~/.ssh/authorized_keys
 
+Frontend
+```shell
+npm run graphql-codegen-watch
+```
+and in a separate window
+```shell
+npm start
+```
 ## Run
 from Windows on Linux
 ```sh

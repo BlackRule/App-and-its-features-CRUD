@@ -1,13 +1,8 @@
 import React from 'react'
 import { Link, Redirect, useHistory } from 'react-router-dom'
 
-import { login } from '../queries'
-import { useCustomer, useClient } from '../store'
-
 const Login = () => {
-  const client = useClient()
   const history = useHistory()
-  const { customer, setCustomer } = useCustomer()
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault()
@@ -15,26 +10,26 @@ const Login = () => {
     const [email, password] = event.target.elements
     if(!email.hasAttribute('value')||!password.hasAttribute('value')) return
     //
-    client
+    /*client
       .request(login, {
-        /*@ts-ignore*/
+        /!*@ts-ignore*!/
         email: email.value,
-        /*@ts-ignore*/
+        /!*@ts-ignore*!/
         password: password.value,
-      })
-      .then(({ login_customer: { customer, token } }) => {
+      })*/
+      /*.then(({ login_customer: { customer, token } }) => {
         client.setHeader('authorization', `Bearer ${token}`)
 
         setCustomer(customer)
 
         history.push('/')
       })
-      .catch(console.log)
+      .catch(console.log)*/
   }
 
-  if (customer) {
+  /*if (customer) {
     return <Redirect to="/" />
-  }
+  }*/
 
   return (
     <div className="text-center">

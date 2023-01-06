@@ -1,23 +1,22 @@
 import React from 'react'
-import { ClientWrapper, CustomerWrapper } from '../../store'
 import { Route, BrowserRouter } from 'react-router-dom'
 
 
-import Login from '../../pages/Login'
 import Register from '../../pages/Register'
+import Login from '../../pages/Login'
 import Dashboard from '../../pages/Dashboard'
+import {ApolloProvider} from "@apollo/client";
+import {client} from "../../client";
 
 function App() {
   return (
-    <ClientWrapper>
-      <CustomerWrapper>
+      <ApolloProvider client={client}>
         <BrowserRouter>
-          <Route path="/auth/signin" component={Login} />
           <Route path="/auth/register" component={Register} />
+          <Route path="/auth/login" component={Login} />
           <Route path="/" exact component={Dashboard} />
         </BrowserRouter>
-      </CustomerWrapper>
-    </ClientWrapper>
+      </ApolloProvider>
   )
 }
 
