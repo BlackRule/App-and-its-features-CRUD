@@ -1,0 +1,6 @@
+/dst/static/
+/dst/exe
+/dst/exe.exe
+/gopath/
+.idea/
+__generated__

@@ -12,17 +12,21 @@ services:
       - ./postgresql.data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    hostname: postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U habrpguser -d habrdb"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G
   backend:
-    image: busybox:latest
-    volumes:
-      - ./app_compare:/app_compare
-    command: ["/app_compare/app_compare"]
+    build: ./docker/go
     ports:
       - "80:80"
+
+
