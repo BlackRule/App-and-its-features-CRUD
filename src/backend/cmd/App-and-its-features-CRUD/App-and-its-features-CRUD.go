@@ -1,4 +1,4 @@
-package app
+package App_and_its_features_CRUD
 
 import (
 	"fmt"
@@ -29,23 +29,7 @@ var (
 	router = gin.Default()
 )
 
-// @title Go API Boilerplate Swagger
-// @version 1.0
-// @description This is Go API Boilerplate
-// @termsOfService http://swagger.io/terms/
-
-// @contact.name API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
-
-// @host localhost:3000
-// @BasePath /
-
-// @securityDefinitions.apikey ApiKeyAuth
-// @in header
-// @name Authorization
-
-func Run() {
+func main() {
 
 	/*
 		====== Setup configs ============

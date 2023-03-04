@@ -247,7 +247,7 @@ func (ctl *userController) ForgotPassword(c *gin.Context) {
 	}
 
 	// Issue token for user to update his/her password
-	token, err := ctl.us.InitiateResetPassowrd(input.Email)
+	token, err := ctl.us.InitiateResetPassword(input.Email)
 	if err != nil {
 		HTTPRes(c, http.StatusInternalServerError, err.Error(), nil)
 		return

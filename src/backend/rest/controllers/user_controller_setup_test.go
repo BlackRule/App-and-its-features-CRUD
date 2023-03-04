@@ -76,7 +76,7 @@ func (us *userSvc) ComparePassword(rawPassword string, passwordFromDB string) er
 	return nil
 }
 
-func (us *userSvc) InitiateResetPassowrd(email string) (string, error) {
+func (us *userSvc) InitiateResetPassword(email string) (string, error) {
 	if email == "bob@cc.cc" {
 		return "", errors.New("Nop")
 	}

@@ -110,3 +110,15 @@ updateUser(input:{firstName:"Ivan",email:"dwde"}){id}
 
 
 https://www.youtube.com/watch?v=d2gfJ8UVPDo&t=402s
+
+swag init -g app/app.go
+
+go test \
+./common/...\
+./controllers/...\
+./gql/...\
+./infra/...\
+./middlewares/...\
+./repositories/...\
+./services/...\
+-coverprofile=coverage.txt -covermode=atomic

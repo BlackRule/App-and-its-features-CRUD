@@ -1,7 +1,7 @@
 package emailservice
 
 import (
-	"github.com/BlackRule/App-and-its-features-CRUD/infra/mailgunclient"
+	"github.com/BlackRule/App-and-its-features-CRUD/third_party/mailgunclient"
 )
 
 // EmailService interface

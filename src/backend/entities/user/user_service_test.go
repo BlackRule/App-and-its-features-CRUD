@@ -218,7 +218,7 @@ func TestComparePassword(t *testing.T) {
 	})
 }
 
-func TestInitiateResetPassowrd(t *testing.T) {
+func TestInitiateResetPassword(t *testing.T) {
 	t.Run("Issue token and create reset password record", func(t *testing.T) {
 		testUser := &User{
 			Model:     gorm.Model{ID: uint(1)},
@@ -241,7 +241,7 @@ func TestInitiateResetPassowrd(t *testing.T) {
 		userRepo.On("GetByEmail", testUser.Email).Return(testUser, nil)
 		pwdRepo.On("Create", testPwd).Return(nil)
 
-		token, err := u.InitiateResetPassowrd(testUser.Email)
+		token, err := u.InitiateResetPassword(testUser.Email)
 		assert.EqualValues(t, "token", token)
 		assert.Nil(t, err)
 	})

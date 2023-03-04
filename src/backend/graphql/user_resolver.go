@@ -143,7 +143,7 @@ func (r *mutationResolver) ForgotPassword(ctx context.Context, email string) (bo
 	}
 
 	// Issue token for user to update his/her password
-	token, err := r.UserService.InitiateResetPassowrd(email)
+	token, err := r.UserService.InitiateResetPassword(email)
 	if err != nil {
 		return false, err
 	}

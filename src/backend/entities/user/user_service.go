@@ -19,7 +19,7 @@ type UserService interface {
 	Update(*User) error
 	HashPassword(rawPassword string) (string, error)
 	ComparePassword(rawPassword string, passwordFromDB string) error
-	InitiateResetPassowrd(email string) (string, error)
+	InitiateResetPassword(email string) (string, error)
 	CompleteUpdatePassword(token, newPassword string) (*User, error)
 }
 
@@ -99,7 +99,7 @@ func (us *userService) ComparePassword(rawPassword string, passwordFromDB string
 	)
 }
 
-func (us *userService) InitiateResetPassowrd(email string) (string, error) {
+func (us *userService) InitiateResetPassword(email string) (string, error) {
 	user, err := us.Repo.GetByEmail(email)
 	if err != nil {
 		return "", err
