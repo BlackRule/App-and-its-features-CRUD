@@ -12,7 +12,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// UserService interface
 type UserService interface {
 	GetByID(id uint) (*User, error)
 	GetByEmail(email string) (*User, error)
@@ -32,7 +31,6 @@ type userService struct {
 	pepper  string
 }
 
-// NewUserService will instantiate User Service
 func NewUserService(
 	repo Repo,
 	pwdRepo pwdRepo.Repo,
@@ -101,7 +99,6 @@ func (us *userService) ComparePassword(rawPassword string, passwordFromDB string
 	)
 }
 
-// Issue token for user to update his/her password
 func (us *userService) InitiateResetPassowrd(email string) (string, error) {
 	user, err := us.Repo.GetByEmail(email)
 	if err != nil {

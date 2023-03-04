@@ -1,9 +1,9 @@
-package gql
+package graphql
 
 import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/BlackRule/App-and-its-features-CRUD/entities/user"
-	"github.com/BlackRule/App-and-its-features-CRUD/gql/gen"
+	"github.com/BlackRule/App-and-its-features-CRUD/graphql/gen"
 
 	"github.com/99designs/gqlgen/handler"
 	"github.com/BlackRule/App-and-its-features-CRUD/services/authservice"

@@ -1,8 +1,8 @@
-package gql
+package graphql
 
 import (
 	"github.com/BlackRule/App-and-its-features-CRUD/entities/user"
-	"github.com/BlackRule/App-and-its-features-CRUD/gql/gen"
+	"github.com/BlackRule/App-and-its-features-CRUD/graphql/gen"
 	"github.com/BlackRule/App-and-its-features-CRUD/services/authservice"
 	"github.com/BlackRule/App-and-its-features-CRUD/services/emailservice"
 )

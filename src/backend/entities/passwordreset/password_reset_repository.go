@@ -4,7 +4,6 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// Repo interface
 type Repo interface {
 	GetOneByToken(token string) (*PasswordReset, error)
 	Create(pr *PasswordReset) error
@@ -15,7 +14,6 @@ type pwdRepo struct {
 	db *gorm.DB
 }
 
-// NewPasswordResetRepo will instantiate User Repository
 func NewPasswordResetRepo(db *gorm.DB) Repo {
 	return &pwdRepo{
 		db: db,

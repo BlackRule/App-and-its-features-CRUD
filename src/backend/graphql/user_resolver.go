@@ -1,10 +1,10 @@
-package gql
+package graphql
 
 import (
 	"context"
 	"errors"
 	"github.com/BlackRule/App-and-its-features-CRUD/entities/user"
-	"github.com/BlackRule/App-and-its-features-CRUD/gql/gen"
+	"github.com/BlackRule/App-and-its-features-CRUD/graphql/gen"
 )
 
 func (r *queryResolver) User(ctx context.Context, id int) (*gen.User, error) {

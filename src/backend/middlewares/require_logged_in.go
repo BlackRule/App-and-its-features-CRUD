@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"github.com/BlackRule/App-and-its-features-CRUD/controllers"
+	"github.com/BlackRule/App-and-its-features-CRUD/rest/controllers"
 	"net/http"
 	"strings"
 
