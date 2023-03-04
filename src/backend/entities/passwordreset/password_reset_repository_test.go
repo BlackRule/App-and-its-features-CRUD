@@ -3,12 +3,12 @@ package passwordreset
 import (
 	"database/sql/driver"
 	"errors"
+	"github.com/DATA-DOG/go-sqlmock"
 	"log"
 	"regexp"
 	"testing"
 	"time"
 
-	pwd "github.com/BlackRule/App-and-its-features-CRUD/models/passwordreset"
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 )
@@ -39,7 +39,7 @@ func TestGetOneByToken(t *testing.T) {
 	defer gormDB.Close()
 
 	t.Run("Found a record", func(t *testing.T) {
-		expected := &pwd.PasswordReset{
+		expected := &PasswordReset{
 			Token: "token",
 		}
 
@@ -86,7 +86,7 @@ func TestCreate(t *testing.T) {
 	defer gormDB.Close()
 
 	t.Run("Create a record", func(t *testing.T) {
-		expected := &pwd.PasswordReset{
+		expected := &PasswordReset{
 			UserID: uint(1),
 			Token:  "token",
 		}
@@ -114,7 +114,7 @@ func TestCreate(t *testing.T) {
 	t.Run("Creating a record fails", func(t *testing.T) {
 		exp := errors.New("oops")
 
-		record := &pwd.PasswordReset{
+		record := &PasswordReset{
 			UserID: uint(1),
 			Token:  "token",
 		}

@@ -7,8 +7,8 @@ import (
 
 	"github.com/BlackRule/App-and-its-features-CRUD/common/hmachash"
 	rdms "github.com/BlackRule/App-and-its-features-CRUD/common/randomstring"
-	pwd "github.com/BlackRule/App-and-its-features-CRUD/models/passwordreset"
-	pwdRepo "github.com/BlackRule/App-and-its-features-CRUD/repositories/passwordreset"
+	pwd "github.com/BlackRule/App-and-its-features-CRUD/entities/passwordreset"
+	pwdRepo "github.com/BlackRule/App-and-its-features-CRUD/entities/passwordreset"
 	"golang.org/x/crypto/bcrypt"
 )
 

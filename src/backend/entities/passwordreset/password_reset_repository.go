@@ -1,14 +1,13 @@
 package passwordreset
 
 import (
-	pwd "github.com/BlackRule/App-and-its-features-CRUD/models/passwordreset"
 	"github.com/jinzhu/gorm"
 )
 
 // Repo interface
 type Repo interface {
-	GetOneByToken(token string) (*pwd.PasswordReset, error)
-	Create(pr *pwd.PasswordReset) error
+	GetOneByToken(token string) (*PasswordReset, error)
+	Create(pr *PasswordReset) error
 	Delete(id uint) error
 }
 
@@ -23,20 +22,20 @@ func NewPasswordResetRepo(db *gorm.DB) Repo {
 	}
 }
 
-func (repo *pwdRepo) GetOneByToken(token string) (*pwd.PasswordReset, error) {
-	var pwr pwd.PasswordReset
+func (repo *pwdRepo) GetOneByToken(token string) (*PasswordReset, error) {
+	var pwr PasswordReset
 	if err := repo.db.Where("token = ?", token).First(&pwr).Error; err != nil {
 		return nil, err
 	}
 	return &pwr, nil
 }
 
-func (repo *pwdRepo) Create(pwr *pwd.PasswordReset) error {
+func (repo *pwdRepo) Create(pwr *PasswordReset) error {
 	return repo.db.Create(pwr).Error
 }
 
 func (repo *pwdRepo) Delete(id uint) error {
-	pwr := pwd.PasswordReset{
+	pwr := PasswordReset{
 		Model: gorm.Model{ID: id},
 	}
 	return repo.db.Delete(&pwr).Error
