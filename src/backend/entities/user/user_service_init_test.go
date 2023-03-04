@@ -1,8 +1,7 @@
-package userservice
+package user
 
 import (
 	"github.com/BlackRule/App-and-its-features-CRUD/models/passwordreset"
-	"github.com/BlackRule/App-and-its-features-CRUD/models/user"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -17,22 +16,22 @@ type repoMock struct {
 	mock.Mock
 }
 
-func (repo *repoMock) GetByID(id uint) (*user.User, error) {
+func (repo *repoMock) GetByID(id uint) (*User, error) {
 	args := repo.Called(id)
-	return args.Get(0).(*user.User), args.Error(1)
+	return args.Get(0).(*User), args.Error(1)
 }
 
-func (repo *repoMock) GetByEmail(email string) (*user.User, error) {
+func (repo *repoMock) GetByEmail(email string) (*User, error) {
 	args := repo.Called(email)
-	return args.Get(0).(*user.User), args.Error(1)
+	return args.Get(0).(*User), args.Error(1)
 }
 
-func (repo *repoMock) Create(user *user.User) error {
+func (repo *repoMock) Create(user *User) error {
 	args := repo.Called(user)
 	return args.Error(0)
 }
 
-func (repo *repoMock) Update(user *user.User) error {
+func (repo *repoMock) Update(user *User) error {
 	args := repo.Called(user)
 	return args.Error(0)
 }

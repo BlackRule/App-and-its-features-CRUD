@@ -2,15 +2,13 @@ package controllers
 
 import (
 	"errors"
+	"github.com/BlackRule/App-and-its-features-CRUD/entities/user"
 	"net/http"
 	"strconv"
 	"strings"
 
-	"github.com/BlackRule/App-and-its-features-CRUD/models/user"
 	"github.com/BlackRule/App-and-its-features-CRUD/services/authservice"
 	"github.com/BlackRule/App-and-its-features-CRUD/services/emailservice"
-	"github.com/BlackRule/App-and-its-features-CRUD/services/userservice"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -49,14 +47,14 @@ type UserController interface {
 }
 
 type userController struct {
-	us userservice.UserService
+	us user.UserService
 	as authservice.AuthService
 	es emailservice.EmailService
 }
 
 // NewUserController instantiates User Controller
 func NewUserController(
-	us userservice.UserService,
+	us user.UserService,
 	as authservice.AuthService) UserController {
 	return &userController{
 		us: us,

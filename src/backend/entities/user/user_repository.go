@@ -1,17 +1,15 @@
-package userrepo
+package user
 
 import (
-	"github.com/BlackRule/App-and-its-features-CRUD/models/user"
-
 	"github.com/jinzhu/gorm"
 )
 
 // Repo interface
 type Repo interface {
-	GetByID(id uint) (*user.User, error)
-	GetByEmail(email string) (*user.User, error)
-	Create(user *user.User) error
-	Update(user *user.User) error
+	GetByID(id uint) (*User, error)
+	GetByEmail(email string) (*User, error)
+	Create(user *User) error
+	Update(user *User) error
 }
 
 type userRepo struct {
@@ -25,26 +23,26 @@ func NewUserRepo(db *gorm.DB) Repo {
 	}
 }
 
-func (u *userRepo) GetByID(id uint) (*user.User, error) {
-	var user user.User
+func (u *userRepo) GetByID(id uint) (*User, error) {
+	var user User
 	if err := u.db.First(&user, id).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
 }
 
-func (u *userRepo) GetByEmail(email string) (*user.User, error) {
-	var user user.User
+func (u *userRepo) GetByEmail(email string) (*User, error) {
+	var user User
 	if err := u.db.Where("email = ?", email).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
 }
 
-func (u *userRepo) Create(user *user.User) error {
+func (u *userRepo) Create(user *User) error {
 	return u.db.Create(user).Error
 }
 
-func (u *userRepo) Update(user *user.User) error {
+func (u *userRepo) Update(user *User) error {
 	return u.db.Save(user).Error
 }

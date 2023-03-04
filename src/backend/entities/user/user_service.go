@@ -1,4 +1,4 @@
-package userservice
+package user
 
 import (
 	"errors"
@@ -8,28 +8,24 @@ import (
 	"github.com/BlackRule/App-and-its-features-CRUD/common/hmachash"
 	rdms "github.com/BlackRule/App-and-its-features-CRUD/common/randomstring"
 	pwd "github.com/BlackRule/App-and-its-features-CRUD/models/passwordreset"
-	"github.com/BlackRule/App-and-its-features-CRUD/models/user"
-
 	pwdRepo "github.com/BlackRule/App-and-its-features-CRUD/repositories/passwordreset"
-	"github.com/BlackRule/App-and-its-features-CRUD/repositories/userrepo"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
 // UserService interface
 type UserService interface {
-	GetByID(id uint) (*user.User, error)
-	GetByEmail(email string) (*user.User, error)
-	Create(*user.User) error
-	Update(*user.User) error
+	GetByID(id uint) (*User, error)
+	GetByEmail(email string) (*User, error)
+	Create(*User) error
+	Update(*User) error
 	HashPassword(rawPassword string) (string, error)
 	ComparePassword(rawPassword string, passwordFromDB string) error
 	InitiateResetPassowrd(email string) (string, error)
-	CompleteUpdatePassword(token, newPassword string) (*user.User, error)
+	CompleteUpdatePassword(token, newPassword string) (*User, error)
 }
 
 type userService struct {
-	Repo    userrepo.Repo
+	Repo    Repo
 	PwdRepo pwdRepo.Repo
 	Rds     rdms.RandomString
 	hmac    hmachash.HMAC
@@ -38,7 +34,7 @@ type userService struct {
 
 // NewUserService will instantiate User Service
 func NewUserService(
-	repo userrepo.Repo,
+	repo Repo,
 	pwdRepo pwdRepo.Repo,
 	rds rdms.RandomString,
 	hmac hmachash.HMAC,
@@ -53,7 +49,7 @@ func NewUserService(
 	}
 }
 
-func (us *userService) GetByID(id uint) (*user.User, error) {
+func (us *userService) GetByID(id uint) (*User, error) {
 	if id == 0 {
 		return nil, errors.New("id param is required")
 	}
@@ -64,7 +60,7 @@ func (us *userService) GetByID(id uint) (*user.User, error) {
 	return user, nil
 }
 
-func (us *userService) GetByEmail(email string) (*user.User, error) {
+func (us *userService) GetByEmail(email string) (*User, error) {
 	if email == "" {
 		return nil, errors.New("email(string) is required")
 	}
@@ -75,7 +71,7 @@ func (us *userService) GetByEmail(email string) (*user.User, error) {
 	return user, nil
 }
 
-func (us *userService) Create(user *user.User) error {
+func (us *userService) Create(user *User) error {
 	hashedPass, err := us.HashPassword(user.Password)
 	if err != nil {
 		return err
@@ -84,7 +80,7 @@ func (us *userService) Create(user *user.User) error {
 	return us.Repo.Create(user)
 }
 
-func (us *userService) Update(user *user.User) error {
+func (us *userService) Update(user *User) error {
 	return us.Repo.Update(user)
 }
 
@@ -131,7 +127,7 @@ func (us *userService) InitiateResetPassowrd(email string) (string, error) {
 	return token, nil
 }
 
-func (us *userService) CompleteUpdatePassword(token, newPassword string) (*user.User, error) {
+func (us *userService) CompleteUpdatePassword(token, newPassword string) (*User, error) {
 	hashedToken := us.hmac.Hash(token)
 
 	pwr, err := us.PwdRepo.GetOneByToken(hashedToken)

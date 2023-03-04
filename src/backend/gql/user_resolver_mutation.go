@@ -3,9 +3,9 @@ package gql
 import (
 	"context"
 	"errors"
+	"github.com/BlackRule/App-and-its-features-CRUD/entities/user"
 
 	"github.com/BlackRule/App-and-its-features-CRUD/gql/gen"
-	"github.com/BlackRule/App-and-its-features-CRUD/models/user"
 )
 
 func (r *mutationResolver) Login(ctx context.Context, input gen.RegisterLogin) (*gen.RegisterLoginOutput, error) {

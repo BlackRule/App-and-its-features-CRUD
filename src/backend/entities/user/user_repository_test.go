@@ -1,9 +1,9 @@
-package userrepo
+package user
 
 import (
 	"database/sql/driver"
 	"errors"
-	"github.com/BlackRule/App-and-its-features-CRUD/models/user"
+	"github.com/DATA-DOG/go-sqlmock"
 	"log"
 	"regexp"
 	"testing"
@@ -40,7 +40,7 @@ func TestGetByID(t *testing.T) {
 	defer gormDB.Close()
 
 	t.Run("Get a user", func(t *testing.T) {
-		expected := &user.User{
+		expected := &User{
 			Email: "alice@cc.cc",
 		}
 
@@ -100,7 +100,7 @@ func TestGetByEmail(t *testing.T) {
 	defer gormDB.Close()
 
 	t.Run("Get a user", func(t *testing.T) {
-		expected := &user.User{
+		expected := &User{
 			Email: "alice@cc.cc",
 		}
 
@@ -161,7 +161,7 @@ func TestCreate(t *testing.T) {
 	defer gormDB.Close()
 
 	t.Run("Create a user", func(t *testing.T) {
-		user := &user.User{
+		user := &User{
 			Email:    "alice@cc.cc",
 			Password: "abc",
 		}
@@ -187,7 +187,7 @@ func TestCreate(t *testing.T) {
 
 	t.Run("Create a user fails", func(t *testing.T) {
 		exp := errors.New("oops")
-		user := &user.User{
+		user := &User{
 			Email:    "alice@cc.cc",
 			Password: "abc",
 		}
@@ -216,7 +216,7 @@ func TestUpdate(t *testing.T) {
 	defer gormDB.Close()
 
 	t.Run("Update a user", func(t *testing.T) {
-		user := &user.User{
+		user := &User{
 			Email:    "alice@cc.cc",
 			Password: "abc",
 		}
@@ -242,7 +242,7 @@ func TestUpdate(t *testing.T) {
 
 	t.Run("Update a user fails", func(t *testing.T) {
 		exp := errors.New("oops")
-		user := &user.User{
+		user := &User{
 			Email:    "alice@cc.cc",
 			Password: "abc",
 		}

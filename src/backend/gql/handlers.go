@@ -2,18 +2,17 @@ package gql
 
 import (
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/BlackRule/App-and-its-features-CRUD/entities/user"
 	"github.com/BlackRule/App-and-its-features-CRUD/gql/gen"
 
-	"github.com/BlackRule/App-and-its-features-CRUD/services/authservice"
-	"github.com/BlackRule/App-and-its-features-CRUD/services/userservice"
-
 	"github.com/99designs/gqlgen/handler"
+	"github.com/BlackRule/App-and-its-features-CRUD/services/authservice"
 	"github.com/gin-gonic/gin"
 )
 
 // GraphqlHandler defines the GQLGen GraphQL server handler
 func GraphqlHandler(
-	us userservice.UserService,
+	us user.UserService,
 	as authservice.AuthService) gin.HandlerFunc {
 	// NewExecutableSchema and Config are in the generated.go file
 	conf := gen.Config{

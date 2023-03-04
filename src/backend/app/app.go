@@ -2,17 +2,16 @@ package app
 
 import (
 	"fmt"
+	"github.com/BlackRule/App-and-its-features-CRUD/entities/user"
 	"log"
 	"net/http"
 
 	"github.com/BlackRule/App-and-its-features-CRUD/common/hmachash"
 	"github.com/BlackRule/App-and-its-features-CRUD/common/randomstring"
 	"github.com/BlackRule/App-and-its-features-CRUD/configs"
-	pwdDomain "github.com/BlackRule/App-and-its-features-CRUD/models/passwordreset"
-	"github.com/BlackRule/App-and-its-features-CRUD/models/user"
-
 	"github.com/BlackRule/App-and-its-features-CRUD/gql"
 	"github.com/BlackRule/App-and-its-features-CRUD/middlewares"
+	pwdDomain "github.com/BlackRule/App-and-its-features-CRUD/models/passwordreset"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -22,10 +21,7 @@ import (
 
 	"github.com/BlackRule/App-and-its-features-CRUD/controllers"
 	"github.com/BlackRule/App-and-its-features-CRUD/repositories/passwordreset"
-	"github.com/BlackRule/App-and-its-features-CRUD/repositories/userrepo"
 	"github.com/BlackRule/App-and-its-features-CRUD/services/authservice"
-	"github.com/BlackRule/App-and-its-features-CRUD/services/userservice"
-
 	_ "github.com/lib/pq" // For Postgres setup
 )
 
@@ -82,13 +78,13 @@ func Run() {
 	/*
 		====== Setup repositories =======
 	*/
-	userRepo := userrepo.NewUserRepo(db)
+	userRepo := user.NewUserRepo(db)
 	pwdRepo := passwordreset.NewPasswordResetRepo(db)
 
 	/*
 		====== Setup services ===========
 	*/
-	userService := userservice.NewUserService(userRepo, pwdRepo, rds, hm, config.Pepper)
+	userService := user.NewUserService(userRepo, pwdRepo, rds, hm, config.Pepper)
 	authService := authservice.NewAuthService(config.JWTSecret)
 
 	/*

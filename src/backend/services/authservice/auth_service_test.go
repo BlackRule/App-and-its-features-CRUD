@@ -1,7 +1,7 @@
 package authservice
 
 import (
-	"github.com/BlackRule/App-and-its-features-CRUD/models/user"
+	"github.com/BlackRule/App-and-its-features-CRUD/entities/user"
 	"testing"
 	"time"
 

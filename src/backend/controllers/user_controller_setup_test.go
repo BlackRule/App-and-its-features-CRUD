@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"errors"
+	"github.com/BlackRule/App-and-its-features-CRUD/entities/user"
 
-	"github.com/BlackRule/App-and-its-features-CRUD/models/user"
 	"github.com/BlackRule/App-and-its-features-CRUD/services/authservice"
 	"github.com/jinzhu/gorm"
 )

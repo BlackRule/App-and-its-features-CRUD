@@ -1,15 +1,15 @@
 package gql
 
 import (
+	"github.com/BlackRule/App-and-its-features-CRUD/entities/user"
 	"github.com/BlackRule/App-and-its-features-CRUD/gql/gen"
 	"github.com/BlackRule/App-and-its-features-CRUD/services/authservice"
 	"github.com/BlackRule/App-and-its-features-CRUD/services/emailservice"
-	"github.com/BlackRule/App-and-its-features-CRUD/services/userservice"
 )
 
 // Resolver struct
 type Resolver struct {
-	UserService  userservice.UserService
+	UserService  user.UserService
 	AuthService  authservice.AuthService
 	EmailService emailservice.EmailService
 }

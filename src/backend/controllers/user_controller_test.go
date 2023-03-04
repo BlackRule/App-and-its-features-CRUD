@@ -3,11 +3,10 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/BlackRule/App-and-its-features-CRUD/entities/user"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/BlackRule/App-and-its-features-CRUD/models/user"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"

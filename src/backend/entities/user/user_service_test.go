@@ -1,4 +1,4 @@
-package userservice
+package user
 
 import (
 	"errors"
@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/BlackRule/App-and-its-features-CRUD/models/passwordreset"
-	"github.com/BlackRule/App-and-its-features-CRUD/models/user"
 	"github.com/jinzhu/gorm"
 
 	"github.com/stretchr/testify/assert"
@@ -14,7 +13,7 @@ import (
 
 func TestGetByID(t *testing.T) {
 	t.Run("Get a user", func(t *testing.T) {
-		expected := &user.User{
+		expected := &User{
 			FirstName: "Test",
 			LastName:  "User",
 		}
@@ -54,7 +53,7 @@ func TestGetByID(t *testing.T) {
 		rds := &rdm{}
 		h := &hmacMock{}
 		u := NewUserService(userRepo, pwdRepo, rds, h, pepper)
-		userRepo.On("GetByID", testID10).Return(&user.User{}, expected)
+		userRepo.On("GetByID", testID10).Return(&User{}, expected)
 
 		result, err := u.GetByID(testID10)
 
@@ -65,7 +64,7 @@ func TestGetByID(t *testing.T) {
 
 func TestGetByEmail(t *testing.T) {
 	t.Run("Get a user", func(t *testing.T) {
-		expected := &user.User{
+		expected := &User{
 			FirstName: "Test",
 			LastName:  "User",
 		}
@@ -105,7 +104,7 @@ func TestGetByEmail(t *testing.T) {
 		rds := &rdm{}
 		h := &hmacMock{}
 		u := NewUserService(userRepo, pwdRepo, rds, h, pepper)
-		userRepo.On("GetByEmail", testEmail).Return(&user.User{}, expected)
+		userRepo.On("GetByEmail", testEmail).Return(&User{}, expected)
 
 		result, err := u.GetByEmail(testEmail)
 
@@ -116,7 +115,7 @@ func TestGetByEmail(t *testing.T) {
 
 func TestCreate(t *testing.T) {
 	t.Run("Create a user", func(t *testing.T) {
-		usr := &user.User{
+		usr := &User{
 			Email:    "alice@cc.cc",
 			Password: "abc123",
 		}
@@ -135,7 +134,7 @@ func TestCreate(t *testing.T) {
 
 	t.Run("Create a user fails", func(t *testing.T) {
 		err := errors.New(("oops"))
-		usr := &user.User{
+		usr := &User{
 			Email: "alice@cc.cc",
 		}
 
@@ -154,7 +153,7 @@ func TestCreate(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	t.Run("Update a user", func(t *testing.T) {
-		usr := &user.User{
+		usr := &User{
 			Email: "alice@cc.cc",
 		}
 
@@ -172,7 +171,7 @@ func TestUpdate(t *testing.T) {
 
 	t.Run("Update a user fails", func(t *testing.T) {
 		err := errors.New(("oops"))
-		usr := &user.User{
+		usr := &User{
 			Email: "alice@cc.cc",
 		}
 
@@ -221,7 +220,7 @@ func TestComparePassword(t *testing.T) {
 
 func TestInitiateResetPassowrd(t *testing.T) {
 	t.Run("Issue token and create reset password record", func(t *testing.T) {
-		testUser := &user.User{
+		testUser := &User{
 			Model:     gorm.Model{ID: uint(1)},
 			FirstName: "Test",
 			LastName:  "User",
@@ -250,7 +249,7 @@ func TestInitiateResetPassowrd(t *testing.T) {
 
 func TestCompleteUpdatePassword(t *testing.T) {
 	t.Run("Update password and delete reset password record", func(t *testing.T) {
-		testUser := &user.User{
+		testUser := &User{
 			Model:     gorm.Model{ID: uint(1)},
 			FirstName: "Test",
 			LastName:  "User",
