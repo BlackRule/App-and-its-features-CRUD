@@ -1,0 +1,6 @@
+mutation {
+    updateApp(id: 4 name: ""){
+        id
+        name
+    }
+}

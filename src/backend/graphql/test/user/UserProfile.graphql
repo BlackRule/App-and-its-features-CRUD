@@ -1,0 +1,10 @@
+query {
+    userProfile {
+        id
+        email
+        firstName
+        lastName
+        active
+        role
+    }
+}

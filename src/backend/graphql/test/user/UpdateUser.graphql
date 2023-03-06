@@ -1,0 +1,3 @@
+mutation {
+    updateUser(input: {firstName: "User" email: "mail"}){firstName}
+}

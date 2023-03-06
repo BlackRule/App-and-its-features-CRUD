@@ -4,6 +4,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/BlackRule/App-and-its-features-CRUD/entities/user"
 	"github.com/BlackRule/App-and-its-features-CRUD/graphql/gen"
+	"github.com/jinzhu/gorm"
 
 	"github.com/99designs/gqlgen/handler"
 	"github.com/BlackRule/App-and-its-features-CRUD/services/authservice"
@@ -11,14 +12,13 @@ import (
 )
 
 // GraphqlHandler defines the GQLGen GraphQL server handler
-func GraphqlHandler(
-	us user.UserService,
-	as authservice.AuthService) gin.HandlerFunc {
+func GraphqlHandler(us user.UserService, as authservice.AuthService, db *gorm.DB) gin.HandlerFunc {
 	// NewExecutableSchema and Config are in the generated.go file
 	conf := gen.Config{
 		Resolvers: &Resolver{
 			UserService: us,
 			AuthService: as,
+			db:          db,
 		},
 	}
 	exec := gen.NewExecutableSchema(conf)

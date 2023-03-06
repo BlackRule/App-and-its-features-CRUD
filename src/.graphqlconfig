@@ -6,6 +6,7 @@
       "Default GraphQL Endpoint": {
         "url": "http://localhost:80/query",
         "headers": {
+          "Authorization": "Bearer ${env:JWT-TOKEN}",
           "user-agent": "JS GraphQL"
         },
         "introspect": false

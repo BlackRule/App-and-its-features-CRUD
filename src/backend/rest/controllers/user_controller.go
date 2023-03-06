@@ -191,14 +191,12 @@ func (ctl *userController) GetProfile(c *gin.Context) {
 // @Failure 500 {object} Response
 // @Router /api/account/profile [put]
 func (ctl *userController) Update(c *gin.Context) {
-	// Get user id from context
 	id, exists := c.Get("user_id")
 	if exists == false {
 		HTTPRes(c, http.StatusBadRequest, "Invalid User ID", nil)
 		return
 	}
 
-	// Retrieve user given id
 	user, err := ctl.us.GetByID(id.(uint))
 	if err != nil {
 		HTTPRes(c, http.StatusInternalServerError, err.Error(), nil)

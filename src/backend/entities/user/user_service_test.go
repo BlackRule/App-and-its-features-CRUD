@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/BlackRule/App-and-its-features-CRUD/models/passwordreset"
+	"github.com/BlackRule/App-and-its-features-CRUD/entities/passwordreset"
 	"github.com/jinzhu/gorm"
 
 	"github.com/stretchr/testify/assert"

@@ -1,0 +1,8 @@
+mutation {
+    register(input: {email: "mail" password: "pass"}){
+        user {
+            id
+        }
+        token
+    }
+}

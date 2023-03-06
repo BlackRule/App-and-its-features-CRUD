@@ -40,6 +40,7 @@ Make changes to schema by editing the file `schema.graphqls`
 Backend
 After making changes run the below command to auto generate the `models` and `resolvers`.
 ```shell
+cd graphql
 go run github.com/99designs/gqlgen generate
 ```
 Programmer needs to implement the resolvers.
@@ -107,7 +108,10 @@ mutation {
 updateUser(input:{firstName:"Ivan",email:"dwde"}){id}
 }
 ```
-
+## Why
+# Updated to go 1.19 (from 1.13)
+because of https://github.com/golang/go/issues/44129
+but it didn't fix the issue :(
 
 https://www.youtube.com/watch?v=d2gfJ8UVPDo&t=402s
 

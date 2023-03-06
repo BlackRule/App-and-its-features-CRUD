@@ -1,0 +1,3 @@
+mutation {
+    deleteApp(id: 8)
+}

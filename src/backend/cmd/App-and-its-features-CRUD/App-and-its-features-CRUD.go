@@ -1,7 +1,8 @@
-package App_and_its_features_CRUD
+package main
 
 import (
 	"fmt"
+	"github.com/BlackRule/App-and-its-features-CRUD/entities/app_feature"
 	"github.com/BlackRule/App-and-its-features-CRUD/entities/passwordreset"
 	"github.com/BlackRule/App-and-its-features-CRUD/entities/user"
 	"github.com/BlackRule/App-and-its-features-CRUD/rest/controllers"
@@ -50,7 +51,7 @@ func main() {
 
 	// Migration
 	// db.DropTableIfExists(&user.User{})
-	db.AutoMigrate(&user.User{}, &pwdDomain.PasswordReset{})
+	db.AutoMigrate(&user.User{}, &pwdDomain.PasswordReset{}, &app_feature.App{})
 	defer db.Close()
 
 	/*
@@ -90,7 +91,7 @@ func main() {
 	router.GET("/graphql", graphql.PlaygroundHandler("/query"))
 	router.POST("/query",
 		middlewares.SetUserContext(config.JWTSecret),
-		graphql.GraphqlHandler(userService, authService))
+		graphql.GraphqlHandler(userService, authService, db))
 
 	api := router.Group("/api")
 

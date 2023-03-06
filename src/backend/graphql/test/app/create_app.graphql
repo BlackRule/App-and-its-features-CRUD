@@ -1,0 +1,9 @@
+mutation {
+    createApp(name: "App1"){
+        id
+        name
+        features {
+            id
+        }
+    }
+}

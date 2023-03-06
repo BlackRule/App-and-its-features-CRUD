@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/BlackRule/App-and-its-features-CRUD/models/passwordreset"
+	"github.com/BlackRule/App-and-its-features-CRUD/entities/passwordreset"
 	"github.com/stretchr/testify/mock"
 )
 

@@ -1,0 +1,23 @@
+# Refer to https://gqlgen.com/config/
+# for detailed .gqlgen.yml documentation.
+
+schema:
+- ../../schema.graphqls
+exec:
+  filename: gen/generated.go
+  package: gen
+model:
+  filename: gen/models_gen.go
+  package: gen
+resolver:
+  filename: resolver.go
+  type: Resolver
+  package: gql
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.IntID
+# noinspection SpellCheckingInspection
+autobind:
+  - github.com/BlackRule/App-and-its-features-CRUD/entities/app_feature
+omit_slice_element_pointers: true

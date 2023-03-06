@@ -15,12 +15,13 @@ type User {
 type Feature{
   id: Int!
   name: String!
+  apps: [App!]!
 }
 
 type App{
   id: Int!
   name: String!
-  features: [Feature!]
+  features: [Feature!]!
 }
 
 input RegisterLogin {
@@ -37,8 +38,8 @@ input UpdateUser {
 type Query {
   user(id: Int!): User!
   userProfile: User!
-  apps: [App!]
-#  features: [Feature!]
+  apps: [App!]!
+#  features: [Feature!]!
 }
 
 type Mutation {
@@ -51,4 +52,6 @@ type Mutation {
   updateApp(id: Int!, name: String!): App!
   deleteApp(id: Int!): Int!
 #  createFeature(name: String!): Feature!
+#  updateFeature(id: Int!, name: String!): Feature!
+#  deleteFeature(id: Int!): Int!
 }

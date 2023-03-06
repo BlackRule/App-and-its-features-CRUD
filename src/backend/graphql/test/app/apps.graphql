@@ -1,0 +1,10 @@
+query {
+    apps {
+        id
+        name
+        features {
+            id
+            name
+        }
+    }
+}
