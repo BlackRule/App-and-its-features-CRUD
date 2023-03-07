@@ -4,12 +4,23 @@ import (
 	"context"
 	"github.com/BlackRule/App-and-its-features-CRUD/common"
 	"github.com/BlackRule/App-and-its-features-CRUD/entities/app_feature"
+	"github.com/BlackRule/App-and-its-features-CRUD/graphql/gen"
 )
 
-// FIXME
-//func (r *Resolver) Feature() gen.FeatureResolver {
-//	return nil
-//}
+type featureResolver struct{ *Resolver }
+
+func (r *featureResolver) Apps(ctx context.Context, obj *app_feature.Feature) ([]app_feature.App, error) {
+	var apps []app_feature.App
+	//TODO handle errors after each step (
+	result1 := r.db.Model(&obj)
+	result2 := result1.Association("Apps")
+	result3 := result2.Find(&apps)
+	return apps, result3.Error
+}
+
+func (r *Resolver) Feature() gen.FeatureResolver {
+	return &featureResolver{r}
+}
 
 func (r *mutationResolver) CreateFeature(ctx context.Context, name string) (*app_feature.Feature, error) {
 	//TODO

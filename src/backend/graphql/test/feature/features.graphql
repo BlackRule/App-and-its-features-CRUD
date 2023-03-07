@@ -2,5 +2,8 @@ query {
     features {
         id
         name
+        apps {
+            id
+        }
     }
 }

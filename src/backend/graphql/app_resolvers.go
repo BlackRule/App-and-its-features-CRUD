@@ -19,6 +19,7 @@ type appResolver struct{ *Resolver }
 
 func (r *appResolver) Features(ctx context.Context, obj *app_feature.App) ([]app_feature.Feature, error) {
 	var features []app_feature.Feature
+	//TODO handle errors after each step (
 	result1 := r.db.Model(&obj)
 	result2 := result1.Association("Features")
 	result3 := result2.Find(&features)

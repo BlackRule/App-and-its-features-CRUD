@@ -21,6 +21,10 @@ models:
     fields:
       features:
         resolver: true
+  Feature:
+    fields:
+      apps:
+        resolver: true
 # noinspection SpellCheckingInspection
 autobind:
   - github.com/BlackRule/App-and-its-features-CRUD/entities/app_feature

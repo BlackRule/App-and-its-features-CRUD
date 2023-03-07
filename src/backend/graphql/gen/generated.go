@@ -37,6 +37,7 @@ type Config struct {
 
 type ResolverRoot interface {
 	App() AppResolver
+	Feature() FeatureResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
 }
@@ -97,6 +98,9 @@ type ComplexityRoot struct {
 
 type AppResolver interface {
 	Features(ctx context.Context, obj *app_feature.App) ([]app_feature.Feature, error)
+}
+type FeatureResolver interface {
+	Apps(ctx context.Context, obj *app_feature.Feature) ([]app_feature.App, error)
 }
 type MutationResolver interface {
 	Register(ctx context.Context, input RegisterLogin) (*RegisterLoginOutput, error)
@@ -1108,7 +1112,7 @@ func (ec *executionContext) _Feature_apps(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Apps, nil
+		return ec.resolvers.Feature().Apps(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1120,17 +1124,17 @@ func (ec *executionContext) _Feature_apps(ctx context.Context, field graphql.Col
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*app_feature.App)
+	res := resTmp.([]app_feature.App)
 	fc.Result = res
-	return ec.marshalNApp2ᚕᚖgithubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐAppᚄ(ctx, field.Selections, res)
+	return ec.marshalNApp2ᚕgithubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐAppᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Feature_apps(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Feature",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -4557,22 +4561,35 @@ func (ec *executionContext) _Feature(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Feature_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 
 			out.Values[i] = ec._Feature_name(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "apps":
+			field := field
 
-			out.Values[i] = ec._Feature_apps(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Feature_apps(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
 			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5251,50 +5268,6 @@ func (ec *executionContext) marshalNApp2ᚕgithubᚗcomᚋBlackRuleᚋAppᚑand�
 				defer wg.Done()
 			}
 			ret[i] = ec.marshalNApp2githubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐApp(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNApp2ᚕᚖgithubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐAppᚄ(ctx context.Context, sel ast.SelectionSet, v []*app_feature.App) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNApp2ᚖgithubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐApp(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
