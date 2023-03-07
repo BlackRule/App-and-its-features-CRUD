@@ -1,0 +1,3 @@
+mutation {
+    removeFeatureFromApp(appId: 1,featureId: 2)
+}

@@ -39,7 +39,7 @@ type Query {
   user(id: Int!): User!
   userProfile: User!
   apps: [App!]!
-#  features: [Feature!]!
+  features: [Feature!]!
 }
 
 type Mutation {
@@ -51,7 +51,9 @@ type Mutation {
   createApp(name: String!): App!
   updateApp(id: Int!, name: String!): App!
   deleteApp(id: Int!): Int!
-#  createFeature(name: String!): Feature!
-#  updateFeature(id: Int!, name: String!): Feature!
-#  deleteFeature(id: Int!): Int!
+  createFeature(name: String!): Feature!
+  updateFeature(id: Int!, name: String!): Feature!
+  deleteFeature(id: Int!): Int!
+  addFeatureToApp(featureId: Int!, appId:Int!):Boolean
+  removeFeatureFromApp(featureId: Int!, appId:Int!):Boolean
 }

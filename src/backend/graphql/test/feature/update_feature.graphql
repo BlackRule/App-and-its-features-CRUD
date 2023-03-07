@@ -1,5 +1,5 @@
 mutation {
-    createFeature(name: "Feature2"){
+    updateFeature(id: 1 name: "Hmm"){
         id
         name
     }

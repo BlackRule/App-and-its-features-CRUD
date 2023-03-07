@@ -1,5 +1,5 @@
 mutation {
-    createApp(name: "App1"){
+    createApp(name: "App2"){
         id
         name
         features {

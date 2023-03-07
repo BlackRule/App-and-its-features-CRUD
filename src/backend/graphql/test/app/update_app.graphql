@@ -1,6 +1,5 @@
 mutation {
-    updateApp(id: 4 name: ""){
+    updateApp(id: 2 name: ""){
         id
-        name
     }
 }

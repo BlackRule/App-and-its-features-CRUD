@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -35,6 +36,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	App() AppResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
 }
@@ -56,18 +58,24 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreateApp      func(childComplexity int, name string) int
-		DeleteApp      func(childComplexity int, id int) int
-		ForgotPassword func(childComplexity int, email string) int
-		Login          func(childComplexity int, input RegisterLogin) int
-		Register       func(childComplexity int, input RegisterLogin) int
-		ResetPassword  func(childComplexity int, resetToken string, password string) int
-		UpdateApp      func(childComplexity int, id int, name string) int
-		UpdateUser     func(childComplexity int, input UpdateUser) int
+		AddFeatureToApp      func(childComplexity int, featureID int, appID int) int
+		CreateApp            func(childComplexity int, name string) int
+		CreateFeature        func(childComplexity int, name string) int
+		DeleteApp            func(childComplexity int, id int) int
+		DeleteFeature        func(childComplexity int, id int) int
+		ForgotPassword       func(childComplexity int, email string) int
+		Login                func(childComplexity int, input RegisterLogin) int
+		Register             func(childComplexity int, input RegisterLogin) int
+		RemoveFeatureFromApp func(childComplexity int, featureID int, appID int) int
+		ResetPassword        func(childComplexity int, resetToken string, password string) int
+		UpdateApp            func(childComplexity int, id int, name string) int
+		UpdateFeature        func(childComplexity int, id int, name string) int
+		UpdateUser           func(childComplexity int, input UpdateUser) int
 	}
 
 	Query struct {
 		Apps        func(childComplexity int) int
+		Features    func(childComplexity int) int
 		User        func(childComplexity int, id int) int
 		UserProfile func(childComplexity int) int
 	}
@@ -87,6 +95,9 @@ type ComplexityRoot struct {
 	}
 }
 
+type AppResolver interface {
+	Features(ctx context.Context, obj *app_feature.App) ([]app_feature.Feature, error)
+}
 type MutationResolver interface {
 	Register(ctx context.Context, input RegisterLogin) (*RegisterLoginOutput, error)
 	Login(ctx context.Context, input RegisterLogin) (*RegisterLoginOutput, error)
@@ -96,11 +107,17 @@ type MutationResolver interface {
 	CreateApp(ctx context.Context, name string) (*app_feature.App, error)
 	UpdateApp(ctx context.Context, id int, name string) (*app_feature.App, error)
 	DeleteApp(ctx context.Context, id int) (int, error)
+	CreateFeature(ctx context.Context, name string) (*app_feature.Feature, error)
+	UpdateFeature(ctx context.Context, id int, name string) (*app_feature.Feature, error)
+	DeleteFeature(ctx context.Context, id int) (int, error)
+	AddFeatureToApp(ctx context.Context, featureID int, appID int) (*bool, error)
+	RemoveFeatureFromApp(ctx context.Context, featureID int, appID int) (*bool, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context, id int) (*User, error)
 	UserProfile(ctx context.Context) (*User, error)
 	Apps(ctx context.Context) ([]app_feature.App, error)
+	Features(ctx context.Context) ([]app_feature.Feature, error)
 }
 
 type executableSchema struct {
@@ -160,6 +177,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Feature.Name(childComplexity), true
 
+	case "Mutation.addFeatureToApp":
+		if e.complexity.Mutation.AddFeatureToApp == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addFeatureToApp_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddFeatureToApp(childComplexity, args["featureId"].(int), args["appId"].(int)), true
+
 	case "Mutation.createApp":
 		if e.complexity.Mutation.CreateApp == nil {
 			break
@@ -172,6 +201,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateApp(childComplexity, args["name"].(string)), true
 
+	case "Mutation.createFeature":
+		if e.complexity.Mutation.CreateFeature == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createFeature_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateFeature(childComplexity, args["name"].(string)), true
+
 	case "Mutation.deleteApp":
 		if e.complexity.Mutation.DeleteApp == nil {
 			break
@@ -183,6 +224,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.DeleteApp(childComplexity, args["id"].(int)), true
+
+	case "Mutation.deleteFeature":
+		if e.complexity.Mutation.DeleteFeature == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteFeature_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteFeature(childComplexity, args["id"].(int)), true
 
 	case "Mutation.forgotPassword":
 		if e.complexity.Mutation.ForgotPassword == nil {
@@ -220,6 +273,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Register(childComplexity, args["input"].(RegisterLogin)), true
 
+	case "Mutation.removeFeatureFromApp":
+		if e.complexity.Mutation.RemoveFeatureFromApp == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeFeatureFromApp_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveFeatureFromApp(childComplexity, args["featureId"].(int), args["appId"].(int)), true
+
 	case "Mutation.resetPassword":
 		if e.complexity.Mutation.ResetPassword == nil {
 			break
@@ -244,6 +309,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateApp(childComplexity, args["id"].(int), args["name"].(string)), true
 
+	case "Mutation.updateFeature":
+		if e.complexity.Mutation.UpdateFeature == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateFeature_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateFeature(childComplexity, args["id"].(int), args["name"].(string)), true
+
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
 			break
@@ -262,6 +339,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Apps(childComplexity), true
+
+	case "Query.features":
+		if e.complexity.Query.Features == nil {
+			break
+		}
+
+		return e.complexity.Query.Features(childComplexity), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -449,7 +533,7 @@ type Query {
   user(id: Int!): User!
   userProfile: User!
   apps: [App!]!
-#  features: [Feature!]!
+  features: [Feature!]!
 }
 
 type Mutation {
@@ -461,9 +545,11 @@ type Mutation {
   createApp(name: String!): App!
   updateApp(id: Int!, name: String!): App!
   deleteApp(id: Int!): Int!
-#  createFeature(name: String!): Feature!
-#  updateFeature(id: Int!, name: String!): Feature!
-#  deleteFeature(id: Int!): Int!
+  createFeature(name: String!): Feature!
+  updateFeature(id: Int!, name: String!): Feature!
+  deleteFeature(id: Int!): Int!
+  addFeatureToApp(featureId: Int!, appId:Int!):Boolean
+  removeFeatureFromApp(featureId: Int!, appId:Int!):Boolean
 }`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -471,6 +557,30 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_addFeatureToApp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["featureId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("featureId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["featureId"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["appId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appId"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["appId"] = arg1
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_createApp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -487,7 +597,37 @@ func (ec *executionContext) field_Mutation_createApp_args(ctx context.Context, r
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createFeature_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_deleteApp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteFeature_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -547,6 +687,30 @@ func (ec *executionContext) field_Mutation_register_args(ctx context.Context, ra
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_removeFeatureFromApp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["featureId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("featureId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["featureId"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["appId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appId"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["appId"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_resetPassword_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -572,6 +736,30 @@ func (ec *executionContext) field_Mutation_resetPassword_args(ctx context.Contex
 }
 
 func (ec *executionContext) field_Mutation_updateApp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateFeature_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 int
@@ -780,7 +968,7 @@ func (ec *executionContext) _App_features(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Features, nil
+		return ec.resolvers.App().Features(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -792,17 +980,17 @@ func (ec *executionContext) _App_features(ctx context.Context, field graphql.Col
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*app_feature.Feature)
+	res := resTmp.([]app_feature.Feature)
 	fc.Result = res
-	return ec.marshalNFeature2ᚕᚖgithubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐFeatureᚄ(ctx, field.Selections, res)
+	return ec.marshalNFeature2ᚕgithubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐFeatureᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_App_features(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "App",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -1438,6 +1626,286 @@ func (ec *executionContext) fieldContext_Mutation_deleteApp(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createFeature(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createFeature(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateFeature(rctx, fc.Args["name"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*app_feature.Feature)
+	fc.Result = res
+	return ec.marshalNFeature2ᚖgithubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐFeature(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createFeature(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Feature_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Feature_name(ctx, field)
+			case "apps":
+				return ec.fieldContext_Feature_apps(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Feature", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createFeature_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateFeature(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateFeature(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateFeature(rctx, fc.Args["id"].(int), fc.Args["name"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*app_feature.Feature)
+	fc.Result = res
+	return ec.marshalNFeature2ᚖgithubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐFeature(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateFeature(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Feature_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Feature_name(ctx, field)
+			case "apps":
+				return ec.fieldContext_Feature_apps(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Feature", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateFeature_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteFeature(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteFeature(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteFeature(rctx, fc.Args["id"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteFeature(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteFeature_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_addFeatureToApp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_addFeatureToApp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddFeatureToApp(rctx, fc.Args["featureId"].(int), fc.Args["appId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_addFeatureToApp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_addFeatureToApp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_removeFeatureFromApp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_removeFeatureFromApp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveFeatureFromApp(rctx, fc.Args["featureId"].(int), fc.Args["appId"].(int))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_removeFeatureFromApp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_removeFeatureFromApp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_user(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_user(ctx, field)
 	if err != nil {
@@ -1609,6 +2077,57 @@ func (ec *executionContext) fieldContext_Query_apps(ctx context.Context, field g
 				return ec.fieldContext_App_features(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type App", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_features(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_features(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Features(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]app_feature.Feature)
+	fc.Result = res
+	return ec.marshalNFeature2ᚕgithubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐFeatureᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_features(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Feature_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Feature_name(ctx, field)
+			case "apps":
+				return ec.fieldContext_Feature_apps(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Feature", field.Name)
 		},
 	}
 	return fc, nil
@@ -3983,22 +4502,35 @@ func (ec *executionContext) _App(ctx context.Context, sel ast.SelectionSet, obj 
 			out.Values[i] = ec._App_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 
 			out.Values[i] = ec._App_name(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "features":
+			field := field
 
-			out.Values[i] = ec._App_features(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._App_features(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
 			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4118,6 +4650,36 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				return ec._Mutation_deleteApp(ctx, field)
 			})
 
+		case "createFeature":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createFeature(ctx, field)
+			})
+
+		case "updateFeature":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateFeature(ctx, field)
+			})
+
+		case "deleteFeature":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteFeature(ctx, field)
+			})
+
+		case "addFeatureToApp":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_addFeatureToApp(ctx, field)
+			})
+
+		case "removeFeatureFromApp":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_removeFeatureFromApp(ctx, field)
+			})
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -4194,6 +4756,26 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_apps(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "features":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_features(ctx, field)
 				return res
 			}
 
@@ -4757,7 +5339,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNFeature2ᚕᚖgithubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐFeatureᚄ(ctx context.Context, sel ast.SelectionSet, v []*app_feature.Feature) graphql.Marshaler {
+func (ec *executionContext) marshalNFeature2githubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐFeature(ctx context.Context, sel ast.SelectionSet, v app_feature.Feature) graphql.Marshaler {
+	return ec._Feature(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNFeature2ᚕgithubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐFeatureᚄ(ctx context.Context, sel ast.SelectionSet, v []app_feature.Feature) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -4781,7 +5367,7 @@ func (ec *executionContext) marshalNFeature2ᚕᚖgithubᚗcomᚋBlackRuleᚋApp
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNFeature2ᚖgithubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐFeature(ctx, sel, v[i])
+			ret[i] = ec.marshalNFeature2githubᚗcomᚋBlackRuleᚋAppᚑandᚑitsᚑfeaturesᚑCRUDᚋentitiesᚋapp_featureᚐFeature(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)

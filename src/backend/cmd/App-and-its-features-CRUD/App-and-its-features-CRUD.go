@@ -51,7 +51,7 @@ func main() {
 
 	// Migration
 	// db.DropTableIfExists(&user.User{})
-	db.AutoMigrate(&user.User{}, &pwdDomain.PasswordReset{}, &app_feature.App{})
+	db.AutoMigrate(&user.User{}, &pwdDomain.PasswordReset{}, &app_feature.App{}, &app_feature.Feature{})
 	defer db.Close()
 
 	/*

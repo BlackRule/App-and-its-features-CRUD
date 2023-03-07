@@ -17,6 +17,10 @@ models:
   ID:
     model:
       - github.com/99designs/gqlgen/graphql.IntID
+  App:
+    fields:
+      features:
+        resolver: true
 # noinspection SpellCheckingInspection
 autobind:
   - github.com/BlackRule/App-and-its-features-CRUD/entities/app_feature

@@ -1,0 +1,3 @@
+mutation {
+    addFeatureToApp(appId: 8,featureId: 2)
+}
