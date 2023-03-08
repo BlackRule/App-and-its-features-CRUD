@@ -1,4 +1,3 @@
-import {Header} from '../components/Header/Header'
 import {useQuery} from '@apollo/client'
 import {APPS} from '../graphql/queries'
 
@@ -15,7 +14,6 @@ export const Apps = () => {
   }
   return (
     <>
-      <Header/>
       <div>Apps</div>
       {f()}
     </>

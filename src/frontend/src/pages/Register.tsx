@@ -1,12 +1,12 @@
 import React, {useState} from 'react'
-import {Link, Redirect, useHistory} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 
 import {useMutation} from '@apollo/client'
 import {REGISTER} from '../graphql/queries'
 
 
 const Register = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const [register, {data, loading, error}] = useMutation(REGISTER)
   const [submitted, setSubmitted] = useState(false)
   if (submitted) {
@@ -14,10 +14,10 @@ const Register = () => {
     if (error) return <p>Submission error! {error.message}</p>
     else {
       localStorage.setItem('jwt_token', data?.register?.token ?? '')
-      history.push('/')
+      navigate('/')
     }
   }
-  if (localStorage.getItem('jwt_token') !== null) return <Redirect to="/"/>
+  if (localStorage.getItem('jwt_token') !== null) navigate('/')
   const onSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault()
     if (!(event.target instanceof HTMLFormElement)) return

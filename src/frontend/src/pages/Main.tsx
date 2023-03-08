@@ -1,17 +1,15 @@
 import React from 'react'
-import {Link, Redirect} from 'react-router-dom'
-import {Header} from '../components/Header/Header'
+import {Link} from 'react-router-dom'
 
-const Dashboard = () => {
+const Main = () => {
   // if (!localStorage.getItem('jwt_token')) {
   //   return <Redirect to="/auth/login"/>
   // }
 
   return (<>
-    <Header/>
     <Link to="/apps">Apps</Link>
     <Link to="/features">Features</Link>
   </>)
 }
 
-export default Dashboard
+export default Main

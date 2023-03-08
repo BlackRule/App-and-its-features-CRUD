@@ -1,11 +1,11 @@
 import React, {useState} from 'react'
-import {Link, useHistory} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import {useMutation} from '@apollo/client'
 import {LOGIN} from '../graphql/queries'
 
 
 const Login = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const [login, {data, loading, error}] = useMutation(LOGIN)
   const [submitted, setSubmitted] = useState(false)
 
@@ -14,7 +14,7 @@ const Login = () => {
     if (error) return <p>Submission error! {error.message}</p>
     else {
       localStorage.setItem('jwt_token', data?.login?.token ?? '')
-      history.push('/')
+      navigate('/')
     }
   }
   const onSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
