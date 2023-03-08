@@ -26,3 +26,27 @@ export const LOGIN = gql(`
     }
   }
 `)
+
+export const APPS = gql(`
+  query apps{
+    apps {
+        id
+        name
+        features {
+            name        
+        }    
+    }
+  }
+`)
+
+export const FEATURES = gql(`
+  query features{
+    features {
+        id
+        name
+        apps {
+            name        
+        }
+    }
+  }
+`)

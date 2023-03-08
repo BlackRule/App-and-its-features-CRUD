@@ -1,26 +1,17 @@
 import React from 'react'
-import {Redirect} from 'react-router-dom'
+import {Link, Redirect} from 'react-router-dom'
+import {Header} from '../components/Header/Header'
 
 const Dashboard = () => {
-  const logout = () => {
-    localStorage.removeItem('jwt_token')
-    window.location.reload()
-  }
+  // if (!localStorage.getItem('jwt_token')) {
+  //   return <Redirect to="/auth/login"/>
+  // }
 
-  if (!localStorage.getItem('jwt_token')) {
-    return <Redirect to="/auth/login"/>
-  }
-
-  return (
-    <header>
-      <button
-        onClick={() => logout()}
-        className=""
-      >
-        Logout
-      </button>
-    </header>
-  )
+  return (<>
+    <Header/>
+    <Link to="/apps">Apps</Link>
+    <Link to="/features">Features</Link>
+  </>)
 }
 
 export default Dashboard

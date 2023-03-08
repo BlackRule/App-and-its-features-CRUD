@@ -3,8 +3,16 @@
   "schemaPath": "schema.graphqls",
   "extensions": {
     "endpoints": {
-      "Default GraphQL Endpoint": {
+      "localhost": {
         "url": "http://localhost:80/query",
+        "headers": {
+          "Authorization": "Bearer ${env:JWT-TOKEN}",
+          "user-agent": "JS GraphQL"
+        },
+        "introspect": false
+      },
+      "debianVM": {
+        "url": "http://192.168.1.69:80/query",
         "headers": {
           "Authorization": "Bearer ${env:JWT-TOKEN}",
           "user-agent": "JS GraphQL"
